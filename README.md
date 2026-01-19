@@ -1,6 +1,6 @@
 # LaravelAnalyzer
 
-A lightweight tool to scan a Laravel application and retrieve detailed, structured information about your models, tables, columns, and relations.
+A lightweight tool to scan a Laravel application and retrieve detailed, structured information about your laravel project for complex tasks.
 
 Usage is super simple:
 
