@@ -80,28 +80,30 @@ Click to expand
 </summary>
 
 ```php
-ControllerObject {
-    name: "UserController",
-    path: "App\\Http\\Controllers\\UserController",
-    methods: [
-        ControllerMethodObject {
-            methods: ["POST"],
-            action: "users.update",
-            actionName: "App\\Http\\Controllers\\UserController@update",
-            prefix: "",
-            url: "users/{user}",
-            routeParameters: [
-                RouteParamObject { name: "user", optional: false, pattern: null, default: null },
-            ],
-            methodParameters: [
-                MethodParamObject { name: "request", hasType: true, type: "Illuminate\\Http\\Request", isOptional: false, default: null },
-                MethodParamObject { name: "product", hasType: true, type: "App\\Models\\User", isOptional: false, default: null },
-            ],
-            middleware: [
-                "web"
-            ]
-        },
-    ]
-}
+Collection [
+    ControllerObject {
+        name: "UserController",
+        path: "App\\Http\\Controllers\\UserController",
+        methods: [
+            ControllerMethodObject {
+                methods: ["POST"],
+                action: "users.update",
+                actionName: "App\\Http\\Controllers\\UserController@update",
+                prefix: "",
+                url: "users/{user}",
+                routeParameters: [
+                    RouteParamObject { name: "user", optional: false, pattern: null, default: null },
+                ],
+                methodParameters: [
+                    MethodParamObject { name: "request", hasType: true, type: "Illuminate\\Http\\Request", isOptional: false, default: null },
+                    MethodParamObject { name: "product", hasType: true, type: "App\\Models\\User", isOptional: false, default: null },
+                ],
+                middleware: [
+                    "web"
+                ]
+            },
+        ]
+    }
+]
 ```
 </div>
