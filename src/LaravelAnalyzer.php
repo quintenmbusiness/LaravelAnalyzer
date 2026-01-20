@@ -2,19 +2,16 @@
 
 namespace quintenmbusiness\LaravelAnalyzer;
 
-use Illuminate\Support\Collection;
 use quintenmbusiness\LaravelAnalyzer\database\ModelResolver;
+use quintenmbusiness\LaravelAnalyzer\Routes\ControllerResolver;
 
 class LaravelAnalyzer
 {
     public ModelResolver $modelResolver;
+    public ControllerResolver $controllerResolver;
 
     public function __construct() {
         $this->modelResolver = new ModelResolver();
-    }
-
-    public function getModels(): Collection
-    {
-        return $this->modelResolver->getModelClasses();
+        $this->controllerResolver = new ControllerResolver();
     }
 }
