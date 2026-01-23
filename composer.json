@@ -1,6 +1,6 @@
 {
   "name": "quintenmbusiness/laravel-analyzer",
-  "description": "Scan a Laravel project and collect structured metadata about models, tables, columns, and relations.",
+  "description": "Generates all the classes you can think of for your laravel application using only migration files",
   "type": "library",
   "license": "MIT",
   "authors": [

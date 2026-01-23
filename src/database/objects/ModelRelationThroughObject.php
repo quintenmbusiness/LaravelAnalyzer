@@ -4,17 +4,18 @@ namespace quintenmbusiness\LaravelAnalyzer\database\objects;
 
 use quintenmbusiness\LaravelAnalyzer\database\ModelRelationshipType;
 
-class ModelRelationObject
+class ModelRelationThroughObject
 {
     public function __construct(
         public ModelRelationshipType $type,
         public string $relationName,
-        public string|null $relatedModel,
+        public ?string $relatedModel,
         public string $relatedTable,
-        public string $foreignKey,
+        public string $throughTable,
+        public ?string $throughModel = null,
+        public string $firstKey,
+        public string $secondKey,
         public string $localKey,
-        public ?string $pivotTable = null,
-        public ?string $morphName = null,
-        public bool $nullable = false
+        public string $secondLocalKey
     ) {}
 }

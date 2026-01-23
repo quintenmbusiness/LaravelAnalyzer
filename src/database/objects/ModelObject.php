@@ -6,10 +6,15 @@ use Illuminate\Support\Collection;
 
 class ModelObject
 {
+    public Collection $relations;
+    public Collection $throughRelations;
+
     public function __construct(
-        public string      $name,
-        public string      $path,
-        public TableObject $table,
-        public Collection $relations,
-    ) {}
+        public ?string $name,
+        public ?string $path,
+        Collection $relations
+    ) {
+        $this->relations = $relations;
+        $this->throughRelations = collect();
+    }
 }

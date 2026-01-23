@@ -8,6 +8,7 @@ class TableObject
 {
     public function __construct(
         public string $name,
+        public ModelObject|null $model,
         public Collection $columns,
     ) {}
 }
