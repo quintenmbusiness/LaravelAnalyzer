@@ -1,0 +1,29 @@
+For models:
+- Automatic Factory discovery / predict possible helpers and checks on the class if it does exist
+
+
+
+Create Translation checker
+#TranslationsObject
+      # Collection<LanguagesObject> languages
+       this is populated by a method that fetches all and then makes instances for the one's that are missing in each Language by first making a combined list of all Translations
+       and then going through all languages again and make the missing one's with all null data.
+
+       This then repeats this same process but for the translations in the language objects.
+
+       This should allow for a possibility for things like
+       - automatic translation editor ui's where someone can highlight missing one's
+
+
+
+       $folderPath
+       # Collection<TranslationObject> $translations <- all translation files in the language folder
+
+
+     method() getAllTypesOfLanguagesFolders <- returns all languages their folderPath
+
+
+
+     it should be possible to also detect if they are used somewhere in the project and if they are being used in the project
+     we can then display their file location, and even in the case of views if we know what view its in we can check the controllers their data possibly (unless its dynamicly generated view names)
+     and figure out using that information the Route information and ability to load it in using a iframe perhaps that updates
