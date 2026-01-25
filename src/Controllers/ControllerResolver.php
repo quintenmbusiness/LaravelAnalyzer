@@ -1,11 +1,11 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Routes;
+namespace quintenmbusiness\LaravelAnalyzer\Controllers;
 
 use Illuminate\Support\Str;
-use quintenmbusiness\LaravelAnalyzer\Routes\objects\ControllerMethodObject;
-use quintenmbusiness\LaravelAnalyzer\Routes\objects\ControllersObject;
-use quintenmbusiness\LaravelAnalyzer\Routes\objects\MethodParamObject;
+use quintenmbusiness\LaravelAnalyzer\Controllers\objects\ControllerMethodObject;
+use quintenmbusiness\LaravelAnalyzer\Controllers\objects\ControllersObject;
+use quintenmbusiness\LaravelAnalyzer\Controllers\objects\MethodParamObject;
 use ReflectionMethod;
 
 class ControllerResolver

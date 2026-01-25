@@ -3,7 +3,7 @@
 namespace quintenmbusiness\LaravelAnalyzer;
 
 use quintenmbusiness\LaravelAnalyzer\database\objects\DatabaseObject;
-use quintenmbusiness\LaravelAnalyzer\Routes\objects\ControllersObject;
+use quintenmbusiness\LaravelAnalyzer\Controllers\objects\ControllersObject;
 
 class LaravelApplicationObject
 {

@@ -12,9 +12,17 @@
   "require": {
     "php": "^8.1",
     "illuminate/support": "^11.0 | ^12.0",
-    "laravel/framework": "^11.0 | ^12.0"
+    "laravel/framework": "^11.0 | ^12.0",
+    "nikic/php-parser": "^5.7"
   },
-  "autoload": {
+  "extra": {
+    "laravel": {
+      "providers": [
+        "quintenmbusiness\\LaravelAnalyzer\\LaravelAnalyzerServiceProvider"
+      ]
+    }
+  },
+"autoload": {
     "psr-4": {
       "quintenmbusiness\\LaravelAnalyzer\\": "src/"
     }

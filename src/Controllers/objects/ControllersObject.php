@@ -1,6 +1,6 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Routes\objects;
+namespace quintenmbusiness\LaravelAnalyzer\Controllers\objects;
 
 use Illuminate\Database\Eloquent\Collection;
 
@@ -37,5 +37,15 @@ class ControllersObject
         }
 
         $this->controllers[$index] = $controller;
+    }
+
+    public function getControllerWithName(string $name): ControllerObject
+    {
+        return $this->controllers->firstWhere('name', $name);
+    }
+
+    public function getControllerWithPath(string $path): ControllerObject
+    {
+        return $this->controllers->firstWhere('path', $path);
     }
 }
