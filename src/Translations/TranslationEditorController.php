@@ -5,17 +5,74 @@ namespace quintenmbusiness\LaravelAnalyzer\Translations;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
+use quintenmbusiness\LaravelAnalyzer\LaravelAnalyzer;
 
 class TranslationEditorController extends Controller
 {
     public function index()
     {
-        $translationsObject = (new TranslationResolver())->getTranslations();
+        $resolver = new TranslationResolver();
+        $translationsObject = $resolver->getTranslations();
+        $translationsUsedInViews = $this->getTranslationsUsedInViews();
+
+        $controllers = (new LaravelAnalyzer())->controllerResolver->getControllers();
+        $scanner = new ControllerViewScanner();
+        $viewUsages = $scanner->getViewUsages($controllers);
+
+        dd($viewUsages);
+
 
         return view('laravel-analyzer::translations.editor', [
             'translations' => $translationsObject,
+            'translationsUsedInViews' => $translationsUsedInViews,
         ]);
     }
+
+
+    public function getTranslationsUsedInViews(): array
+    {
+        $viewsPath = resource_path('views');
+        $translationsInViews = [];
+
+        if (! is_dir($viewsPath)) {
+            return $translationsInViews;
+        }
+
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($viewsPath, \FilesystemIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php') {
+                $content = File::get($file->getPathname());
+
+                // Match __('something.something') or @lang('something.something')
+                preg_match_all("/__\(\s*['\"]([^'\"]+)['\"]\s*\)|@lang\(\s*['\"]([^'\"]+)['\"]\s*\)/", $content, $matches);
+
+                $keys = array_filter(array_merge($matches[1], $matches[2]));
+
+                $parsedKeys = [];
+
+                foreach ($keys as $key) {
+                    $segments = explode('.', $key);
+                    if (count($segments) >= 2) {
+                        $fileKey = array_shift($segments); // first segment as file
+                        $parsedKeys[$fileKey][] = implode('.', $segments);
+                    } else {
+                        $parsedKeys[$segments[0]][] = '';
+                    }
+                }
+
+                if (! empty($parsedKeys)) {
+                    $translationsInViews[$file->getPathname()] = $parsedKeys;
+                }
+            }
+        }
+
+        return $translationsInViews;
+    }
+
 
     public function store(Request $request)
     {

@@ -36,12 +36,14 @@
                                 @foreach($translations->translations as $localeGroup)
                                     <th>{{ $localeGroup->locale }}</th>
                                 @endforeach
+                                <th>Used In Views</th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($file->translations as $line)
                                 <tr>
                                     <td class="text-monospace">{{ $line->key }}</td>
+
                                     @foreach($translations->translations as $localeGroup)
                                         @php
                                             $localeFile = $localeGroup->translationFiles->first(fn($f) => $f->filename === $file->filename);
@@ -56,6 +58,28 @@
                                             >
                                         </td>
                                     @endforeach
+
+                                    <td>
+                                        @php
+                                            $usedIn = [];
+                                            $fileBase = pathinfo($file->filename, PATHINFO_FILENAME); // strip .php or .json
+
+                                            foreach ($translationsUsedInViews ?? [] as $viewPath => $viewKeys) {
+                                                if (isset($viewKeys[$fileBase]) && in_array($line->key, $viewKeys[$fileBase])) {
+                                                    $usedIn[] = str_replace(base_path(), '', $viewPath);
+                                                }
+                                            }
+                                        @endphp
+
+                                        @if(!empty($usedIn))
+                                            <ul class="mb-0 small">
+                                                @foreach($usedIn as $view)
+                                                    <li>{{ $view }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </td>
+
                                 </tr>
                             @endforeach
                             </tbody>
