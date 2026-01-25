@@ -23,11 +23,6 @@ class TranslationEditorController extends Controller
         $translationScanner = new ViewTranslationScanner();
         $translationsInViews = $translationScanner->getTranslationsInViews($viewUsages, $controllers);
 
-        dd($translationsInViews);
-
-
-        dd($viewUsages);
-
 
         return view('laravel-analyzer::translations.editor', [
             'translations' => $translationsObject,
