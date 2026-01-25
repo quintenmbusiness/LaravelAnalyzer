@@ -14,8 +14,8 @@
             @csrf
 
             @php
+                // Deduplicate files by filename
                 $filesByName = collect();
-
                 foreach ($translations->translations as $localeGroup) {
                     foreach ($localeGroup->translationFiles as $file) {
                         if (! $filesByName->has($file->filename)) {
@@ -27,10 +27,7 @@
 
             @foreach($filesByName as $file)
                 <div class="card mb-4">
-                    <div class="card-header">
-                        {{ $file->filename }}
-                    </div>
-
+                    <div class="card-header">{{ $file->filename }}</div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm mb-0">
                             <thead class="table-light">
@@ -45,19 +42,17 @@
                             @foreach($file->translations as $line)
                                 <tr>
                                     <td class="text-monospace">{{ $line->key }}</td>
-
                                     @foreach($translations->translations as $localeGroup)
                                         @php
-                                            $localeFile = $localeGroup->translationFiles->first(fn ($f) => $f->filename === $file->filename);
-                                            $localeLine = $localeFile?->translations->first(fn ($l) => $l->key === $line->key);
+                                            $localeFile = $localeGroup->translationFiles->first(fn($f) => $f->filename === $file->filename);
+                                            $localeLine = $localeFile?->translations->first(fn($l) => $l->key === $line->key);
                                         @endphp
-
                                         <td>
                                             <input
                                                     type="text"
                                                     class="form-control form-control-sm {{ $localeLine && ! $localeLine->exists ? 'border-warning' : '' }}"
                                                     name="translations[{{ $localeGroup->locale }}][{{ $file->filename }}][{{ $line->key }}]"
-                                                    value="{{ $localeLine?->translation }}"
+                                                    value="{{ $localeLine?->translation ?? '' }}"
                                             >
                                         </td>
                                     @endforeach
@@ -70,9 +65,7 @@
             @endforeach
 
             <div class="text-end">
-                <button type="submit" class="btn btn-primary">
-                    Save translations
-                </button>
+                <button type="submit" class="btn btn-primary">Save translations</button>
             </div>
         </form>
     </div>
