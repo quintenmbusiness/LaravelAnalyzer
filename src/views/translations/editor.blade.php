@@ -13,50 +13,60 @@
         <form method="POST" action="{{ route('la.translations.store') }}">
             @csrf
 
-            @foreach($translations->translations as $fileGroup)
-                @foreach($fileGroup->translationFiles as $file)
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            {{ $file->filename }}
-                        </div>
+            @php
+                $filesByName = collect();
 
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-sm mb-0">
-                                <thead class="table-light">
+                foreach ($translations->translations as $localeGroup) {
+                    foreach ($localeGroup->translationFiles as $file) {
+                        if (! $filesByName->has($file->filename)) {
+                            $filesByName->put($file->filename, $file);
+                        }
+                    }
+                }
+            @endphp
+
+            @foreach($filesByName as $file)
+                <div class="card mb-4">
+                    <div class="card-header">
+                        {{ $file->filename }}
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm mb-0">
+                            <thead class="table-light">
+                            <tr>
+                                <th style="width:25%">Key</th>
+                                @foreach($translations->translations as $localeGroup)
+                                    <th>{{ $localeGroup->locale }}</th>
+                                @endforeach
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($file->translations as $line)
                                 <tr>
-                                    <th style="width:25%">Key</th>
+                                    <td class="text-monospace">{{ $line->key }}</td>
+
                                     @foreach($translations->translations as $localeGroup)
-                                        <th>{{ $localeGroup->locale }}</th>
+                                        @php
+                                            $localeFile = $localeGroup->translationFiles->first(fn ($f) => $f->filename === $file->filename);
+                                            $localeLine = $localeFile?->translations->first(fn ($l) => $l->key === $line->key);
+                                        @endphp
+
+                                        <td>
+                                            <input
+                                                    type="text"
+                                                    class="form-control form-control-sm {{ $localeLine && ! $localeLine->exists ? 'border-warning' : '' }}"
+                                                    name="translations[{{ $localeGroup->locale }}][{{ $file->filename }}][{{ $line->key }}]"
+                                                    value="{{ $localeLine?->translation }}"
+                                            >
+                                        </td>
                                     @endforeach
                                 </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($file->translations as $line)
-                                    <tr>
-                                        <td class="text-monospace">{{ $line->key }}</td>
-
-                                        @foreach($translations->translations as $localeGroup)
-                                            @php
-                                                $localeFile = $localeGroup->translationFiles->first(fn ($f) => $f->filename === $file->filename);
-                                                $localeLine = $localeFile?->translations->first(fn ($l) => $l->key === $line->key);
-                                            @endphp
-
-                                            <td>
-                                                <input
-                                                        type="text"
-                                                        class="form-control form-control-sm {{ $localeLine && ! $localeLine->exists ? 'border-warning' : '' }}"
-                                                        name="translations[{{ $localeGroup->locale }}][{{ $file->filename }}][{{ $line->key }}]"
-                                                        value="{{ $localeLine?->translation }}"
-                                                >
-                                            </td>
-                                        @endforeach
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                            @endforeach
+                            </tbody>
+                        </table>
                     </div>
-                @endforeach
+                </div>
             @endforeach
 
             <div class="text-end">
