@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
 use quintenmbusiness\LaravelAnalyzer\LaravelAnalyzer;
+use quintenmbusiness\LaravelAnalyzer\Translations\ViewTranslationScanner;
 
 class TranslationEditorController extends Controller
 {
@@ -16,8 +17,14 @@ class TranslationEditorController extends Controller
         $translationsUsedInViews = $this->getTranslationsUsedInViews();
 
         $controllers = (new LaravelAnalyzer())->controllerResolver->getControllers();
-        $scanner = new ControllerViewScanner();
-        $viewUsages = $scanner->getViewUsages($controllers);
+        $controllerScanner = new ControllerViewScanner();
+        $viewUsages = $controllerScanner->getViewUsages($controllers);
+
+        $translationScanner = new ViewTranslationScanner();
+        $translationsInViews = $translationScanner->getTranslationsInViews($viewUsages, $controllers);
+
+        dd($translationsInViews);
+
 
         dd($viewUsages);
 

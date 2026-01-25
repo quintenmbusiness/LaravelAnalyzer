@@ -2,12 +2,11 @@
 
 namespace quintenmbusiness\LaravelAnalyzer\Translations;
 
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use PhpParser\ParserFactory;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node;
-use Illuminate\Support\Facades\File;
 use quintenmbusiness\LaravelAnalyzer\Controllers\objects\ControllersObject;
 
 class ControllerViewScanner
@@ -18,11 +17,10 @@ class ControllerViewScanner
         $viewUsages = [];
 
         foreach ($controllers->controllers as $controller) {
-            $path = base_path($controller->path). '.php';
-
-            if (!File::exists($path)) continue;
-
-
+            $path = base_path($controller->path) . '.php';
+            if (! File::exists($path)) {
+                continue;
+            }
 
             $code = File::get($path);
 
@@ -34,38 +32,42 @@ class ControllerViewScanner
 
             $traverser = new NodeTraverser();
 
-            $visitor = new class($controller, $viewUsages) extends NodeVisitorAbstract {
+            $traverser->addVisitor(new class($controller, $viewUsages) extends NodeVisitorAbstract {
                 public $controller;
                 public $viewUsages;
+                private $currentMethod = null;
+                private $currentControllerMethodObject = null;
 
                 public function __construct($controller, &$viewUsages)
                 {
                     $this->controller = $controller;
                     $this->viewUsages = &$viewUsages;
-                    $this->currentMethod = null;
                 }
 
                 public function enterNode(Node $node)
                 {
                     if ($node instanceof Node\Stmt\ClassMethod) {
                         $this->currentMethod = $node->name->toString();
+                        // find matching ControllerMethodObject
+                        $this->currentControllerMethodObject = $this->controller->methods
+                            ->first(fn($m) => str_contains($m->actionName, '@' . $this->currentMethod));
                     }
 
-
                     // function calls: view('blade.name', [...])
-                    if ($node instanceof Node\Expr\FuncCall) {
-                        if ($node->name instanceof Node\Name && $node->name->toString() === 'view') {
+                    if ($node instanceof Node\Expr\FuncCall &&
+                        $node->name instanceof Node\Name &&
+                        $node->name->toString() === 'view') {
 
-                            $viewName = $this->resolveStringArg($node->args[0]->value ?? null);
-                            $params = $this->resolveParamsArg($node->args[1]->value ?? null);
-                            if ($viewName) {
-                                $this->viewUsages[] = [
-                                    'controller' => $this->controller->name,
-                                    'method' => $this->currentMethod,
-                                    'view' => $viewName,
-                                    'params' => $params,
-                                ];
-                            }
+                        $viewName = $this->resolveStringArg($node->args[0]->value ?? null);
+                        $params = $this->resolveParamsArg($node->args[1]->value ?? null);
+
+                        if ($viewName) {
+                            $this->viewUsages[] = [
+                                'controller_method' => $this->currentControllerMethodObject,
+                                'method' => $this->currentMethod,
+                                'view' => $viewName,
+                                'params' => $params,
+                            ];
                         }
                     }
 
@@ -83,7 +85,7 @@ class ControllerViewScanner
 
                             if ($viewName) {
                                 $this->viewUsages[] = [
-                                    'controller' => $this->controller->name,
+                                    'controller_method' => $this->currentControllerMethodObject,
                                     'method' => $this->currentMethod,
                                     'view' => $viewName,
                                     'params' => $params,
@@ -111,9 +113,8 @@ class ControllerViewScanner
                     }
                     return [];
                 }
-            };
+            });
 
-            $traverser->addVisitor($visitor);
             $traverser->traverse($ast);
         }
 

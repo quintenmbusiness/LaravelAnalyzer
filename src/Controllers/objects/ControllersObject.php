@@ -38,4 +38,14 @@ class ControllersObject
 
         $this->controllers[$index] = $controller;
     }
+
+    public function getControllerWithName(string $name): ControllerObject
+    {
+        return $this->controllers->firstWhere('name', $name);
+    }
+
+    public function getControllerWithPath(string $path): ControllerObject
+    {
+        return $this->controllers->firstWhere('path', $path);
+    }
 }
