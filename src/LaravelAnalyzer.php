@@ -3,7 +3,7 @@
 namespace quintenmbusiness\LaravelAnalyzer;
 
 use quintenmbusiness\LaravelAnalyzer\database\DatabaseResolver;
-use quintenmbusiness\LaravelAnalyzer\Routes\ControllerResolver;
+use quintenmbusiness\LaravelAnalyzer\Controllers\ControllerResolver;
 
 class LaravelAnalyzer
 {

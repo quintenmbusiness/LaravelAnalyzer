@@ -1,6 +1,6 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Routes\objects;
+namespace quintenmbusiness\LaravelAnalyzer\Controllers\objects;
 
 use Illuminate\Database\Eloquent\Collection;
 

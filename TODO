@@ -27,3 +27,18 @@ Create Translation checker
      it should be possible to also detect if they are used somewhere in the project and if they are being used in the project
      we can then display their file location, and even in the case of views if we know what view its in we can check the controllers their data possibly (unless its dynamicly generated view names)
      and figure out using that information the Route information and ability to load it in using a iframe perhaps that updates
+
+     to make the iframe idea work the following will likely be a good plan
+     - First create a duplicate file for both the Controller and the View
+     - Strip away any route arguments or controller method its body with the exception of the view file call (without params)
+     - Strip away any variable ur method calls in the view (this will not work on all views as there might be other reasons for crashes but it should ensure alot more function possible to in future also strip known elements that will require data  or javascript
+     - create a temp route for the copied controller + view and load that in
+     # edge case where a translation will require variables we will in these cases attempt to
+        1. Try using the name use values we expect they might normaly would be filled by for example things with name in the variablename likely are first + last names
+        2. if that does not work we will try to give it a random type of value out of a array of diffrent variable types
+        3. if none of those work we will simply strip it our or display the variable name itself
+
+        We will test all of the above out untill we have a functioning view (we will test these before showing to the user by generating them doing a request towards them and based on response figure out if it passed or not)
+        this process might be abit heavy unsure of the speed it will take to fully test out things will have to time this with a huge aount of test data and thne try improve
+
+        possibly keep the generation of this as a method where you can do it for a few at a time compared to where rest of this project eager loads everything in
