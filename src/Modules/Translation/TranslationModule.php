@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\File;
 use quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO\TranslationDTO;
 use quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO\TranslationFileDTO;
 use quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO\TranslationLineDTO;
-use quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO\TranslationsObject;
+use quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO\TranslationsDTO;
 
 class TranslationModule
 {
-    public function getTranslations(): TranslationsObject
+    public function getTranslations(): TranslationsDTO
     {
-        $translationsObject = new TranslationsObject();
+        $translationsObject = new TranslationsDTO();
 
         $languageDirectories = [];
 
@@ -41,7 +41,7 @@ class TranslationModule
         }
 
         foreach (array_unique($languageDirectories) as $languageDirectory) {
-            $translationObject = new TranslationModule(
+            $translationObject = new TranslationDTO(
                 $languageDirectory,
                 basename($languageDirectory)
             );
@@ -114,7 +114,7 @@ class TranslationModule
         return array_values(array_unique($matches[1]));
     }
 
-    protected function normalizeMissingTranslationFiles(TranslationsObject $translationsObject): void
+    protected function normalizeMissingTranslationFiles(TranslationsDTO $translationsObject): void
     {
         $canonicalFiles = collect();
 

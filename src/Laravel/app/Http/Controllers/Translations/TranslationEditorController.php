@@ -1,6 +1,6 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Laravel\Http\Controllers\Translations;
+namespace quintenmbusiness\LaravelAnalyzer\Laravel\app\Http\Controllers\Translations;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

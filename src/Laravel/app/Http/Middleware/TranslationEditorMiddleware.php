@@ -1,6 +1,6 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Laravel\Http\Middleware;
+namespace quintenmbusiness\LaravelAnalyzer\Laravel\app\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use quintenmbusiness\LaravelAnalyzer\Laravel\Http\Controllers\Translations\InlineTranslationController;
-use quintenmbusiness\LaravelAnalyzer\Laravel\Http\Controllers\Translations\TranslationEditorController;
+use quintenmbusiness\LaravelAnalyzer\Laravel\app\Http\Controllers\Translations\InlineTranslationController;
+use quintenmbusiness\LaravelAnalyzer\Laravel\app\Http\Controllers\Translations\TranslationEditorController;
 
 Route::middleware(['web'])
     ->prefix('laravel-analyzer/translations')

@@ -14,12 +14,4 @@ class LaravelAnalyzer
         $this->databaseResolver = new DatabaseModule();
         $this->controllerResolver = new RoutingModule();
     }
-
-    public function getApplication(): LaravelApplicationObject
-    {
-        return new LaravelApplicationObject(
-            $this->databaseResolver->getDatabase(),
-            $this->controllerResolver->getControllers()
-        );
-    }
 }
