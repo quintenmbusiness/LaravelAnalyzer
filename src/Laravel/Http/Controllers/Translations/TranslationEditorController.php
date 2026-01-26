@@ -6,15 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
 use quintenmbusiness\LaravelAnalyzer\LaravelAnalyzer;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Services\Translations\ControllerViewScanner;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Services\Translations\ViewTranslationScanner;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\TranslationResolver;
+use quintenmbusiness\LaravelAnalyzer\Modules\Translation\ControllerViewScanner;
+use quintenmbusiness\LaravelAnalyzer\Modules\Translation\TranslationModule;
+use quintenmbusiness\LaravelAnalyzer\Modules\Translation\ViewTranslationScanner;
 
 class TranslationEditorController extends Controller
 {
     public function index()
     {
-        $resolver = new TranslationResolver();
+        $resolver = new TranslationModule();
         $translationsObject = $resolver->getTranslations();
         $translationsUsedInViews = $this->getTranslationsUsedInViews();
 

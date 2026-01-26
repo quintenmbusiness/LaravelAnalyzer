@@ -1,13 +1,13 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Routing\DTO;
 
 //+name:        "request"
 //+hasType:     true
 //+isOptional:  false
 //+type:        "Illuminate\Http\Request"
 //+default:     null
-class MethodParamObject
+class MethodParamDTO
 {
     public function __construct(
         public string $name,

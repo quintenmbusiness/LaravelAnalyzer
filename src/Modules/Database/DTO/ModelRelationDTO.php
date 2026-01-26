@@ -1,10 +1,10 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO;
 
-use quintenmbusiness\LaravelAnalyzer\Enums\ModelRelationshipType;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\Enum\ModelRelationshipType;
 
-class ModelRelationObject
+class ModelRelationDTO
 {
     public function __construct(
         public ModelRelationshipType $type,

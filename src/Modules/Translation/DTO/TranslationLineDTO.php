@@ -1,8 +1,8 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Translations;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO;
 
-class TranslationLineObject
+class TranslationLineDTO
 {
     public function __construct(
         public string $key,

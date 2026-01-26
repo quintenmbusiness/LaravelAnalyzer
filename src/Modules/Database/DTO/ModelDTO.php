@@ -1,10 +1,10 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO;
 
 use Illuminate\Support\Collection;
 
-class ModelObject
+class ModelDTO
 {
     public Collection $relations;
     public Collection $throughRelations;

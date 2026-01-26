@@ -1,17 +1,17 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Services\Translations;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Translation;
 
 use Illuminate\Support\Facades\File;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers\ControllersObject;
+use quintenmbusiness\LaravelAnalyzer\Modules\Routing\DTO\ControllersDTO;
 
 class ControllerViewScanner
 {
-    public function getViewUsages(ControllersObject $controllers): array
+    public function getViewUsages(ControllersDTO $controllers): array
     {
         $parser = (new ParserFactory())->createForHostVersion();
         $viewUsages = [];

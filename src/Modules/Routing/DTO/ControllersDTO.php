@@ -1,10 +1,10 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Routing\DTO;
 
 use Illuminate\Database\Eloquent\Collection;
 
-class ControllersObject
+class ControllersDTO
 {
     public Collection $controllers;
 
@@ -13,7 +13,7 @@ class ControllersObject
         $this->controllers = new Collection();
     }
 
-    public function addController(string $path): ControllerObject
+    public function addController(string $path): ControllerDTO
     {
         $existingController = $this->controllers->firstWhere('path', $path);
 
@@ -21,14 +21,14 @@ class ControllersObject
             return $existingController;
         }
 
-        $controller = (new ControllerObject($path));
+        $controller = (new ControllerDTO($path));
 
-        $this->controllers->push(new ControllerObject($path));
+        $this->controllers->push(new ControllerDTO($path));
 
         return $controller;
     }
 
-    public function updateController(ControllerObject $controller): void
+    public function updateController(ControllerDTO $controller): void
     {
         $index = $this->controllers
             ->search(fn ($item) => $item->path === $controller->path);
@@ -39,12 +39,12 @@ class ControllersObject
         $this->controllers[$index] = $controller;
     }
 
-    public function getControllerWithName(string $name): ControllerObject
+    public function getControllerWithName(string $name): ControllerDTO
     {
         return $this->controllers->firstWhere('name', $name);
     }
 
-    public function getControllerWithPath(string $path): ControllerObject
+    public function getControllerWithPath(string $path): ControllerDTO
     {
         return $this->controllers->firstWhere('path', $path);
     }

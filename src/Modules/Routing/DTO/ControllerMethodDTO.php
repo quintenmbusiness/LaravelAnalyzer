@@ -1,10 +1,10 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Routing\DTO;
 
 use Illuminate\Support\Collection;
 
-class ControllerMethodObject
+class ControllerMethodDTO
 {
     public function __construct(
         public array $methods,

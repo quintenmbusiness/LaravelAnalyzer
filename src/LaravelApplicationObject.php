@@ -2,19 +2,13 @@
 
 namespace quintenmbusiness\LaravelAnalyzer;
 
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers\ControllersObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database\DatabaseObject;
+use quintenmbusiness\LaravelAnalyzer\Modules\Routing\DTO\ControllersDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\DatabaseDTO;
 
 class LaravelApplicationObject
 {
-    /**
-     * @param \quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database\DatabaseObject    $database
-     * @param \quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers\ControllersObject $controllers
-     */
     public function __construct(
-        public DatabaseObject    $database,
-        public ControllersObject $controllers,
-    )
-    {
-    }
+        public DatabaseDTO    $database,
+        public ControllersDTO $controllers,
+    ) {}
 }

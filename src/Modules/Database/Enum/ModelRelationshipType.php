@@ -1,6 +1,6 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Enums;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Database\Enum;
 
 enum ModelRelationshipType: string
 {

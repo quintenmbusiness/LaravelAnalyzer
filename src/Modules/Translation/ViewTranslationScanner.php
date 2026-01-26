@@ -1,6 +1,6 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Services\Translations;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Translation;
 
 use Illuminate\Support\Facades\File;
 

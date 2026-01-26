@@ -1,10 +1,10 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Translations;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO;
 
 use Illuminate\Support\Collection;
 
-class TranslationObject
+class TranslationDTO
 {
     public Collection $translationFiles;
 

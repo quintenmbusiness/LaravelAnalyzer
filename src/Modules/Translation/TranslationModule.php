@@ -1,15 +1,15 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Translation;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Translations\TranslationFileObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Translations\TranslationLineObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Translations\TranslationObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Translations\TranslationsObject;
+use quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO\TranslationDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO\TranslationFileDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO\TranslationLineDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Translation\DTO\TranslationsObject;
 
-class TranslationResolver
+class TranslationModule
 {
     public function getTranslations(): TranslationsObject
     {
@@ -41,7 +41,7 @@ class TranslationResolver
         }
 
         foreach (array_unique($languageDirectories) as $languageDirectory) {
-            $translationObject = new TranslationObject(
+            $translationObject = new TranslationModule(
                 $languageDirectory,
                 basename($languageDirectory)
             );
@@ -54,7 +54,7 @@ class TranslationResolver
                 $translations = $this->loadTranslations($file->getPathname());
 
                 $translationObject->translationFiles->add(
-                    new TranslationFileObject(
+                    new TranslationFileDTO(
                         $file->getFilename(),
                         $file->getPathname(),
                         $this->extractTranslations($translations)
@@ -96,7 +96,7 @@ class TranslationResolver
             }
 
             $translationLines->add(
-                new TranslationLineObject(
+                new TranslationLineDTO(
                     $fullKey,
                     (string) $value,
                     $this->extractVariables((string) $value),
@@ -140,7 +140,7 @@ class TranslationResolver
 
                     foreach ($canonicalKeys as $key => $variables) {
                         $lines->add(
-                            new TranslationLineObject(
+                            new TranslationLineDTO(
                                 $key,
                                 null,
                                 $variables,
@@ -150,7 +150,7 @@ class TranslationResolver
                     }
 
                     $translationObject->translationFiles->add(
-                        new TranslationFileObject(
+                        new TranslationFileDTO(
                             $filename,
                             $translationObject->filePath . DIRECTORY_SEPARATOR . $filename,
                             $lines
@@ -168,7 +168,7 @@ class TranslationResolver
                     }
 
                     $file->translations->add(
-                        new TranslationLineObject(
+                        new TranslationLineDTO(
                             $key,
                             null,
                             $variables,

@@ -1,8 +1,8 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO;
 
-class ColumnObject
+class ColumnDTO
 {
     public function __construct(
         public string $name,

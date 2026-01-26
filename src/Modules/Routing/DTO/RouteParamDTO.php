@@ -1,8 +1,8 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Routing\DTO;
 
-class RouteParamObject
+class RouteParamDTO
 {
     public function __construct(
         public string $name,

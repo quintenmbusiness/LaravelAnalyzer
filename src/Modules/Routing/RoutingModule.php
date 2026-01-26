@@ -1,20 +1,21 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Routing;
 
 use Illuminate\Support\Str;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers\ControllerMethodObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers\ControllersObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers\MethodParamObject;
+use quintenmbusiness\LaravelAnalyzer\Modules\Routing;
+use quintenmbusiness\LaravelAnalyzer\Modules\Routing\DTO\ControllerMethodDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Routing\DTO\ControllersDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Routing\DTO\MethodParamDTO;
 use ReflectionMethod;
 
-class ControllerResolver
+class RoutingModule
 {
-    public function getControllers(): ControllersObject
+    public function getControllers(): ControllersDTO
     {
         $collection = app('router')->getRoutes();
         $routesArray = $this->routesToArray($collection);
-        $controllers = new ControllersObject();
+        $controllers = new ControllersDTO();
 
         foreach ($routesArray as $route) {
 
@@ -38,7 +39,7 @@ class ControllerResolver
                  $pattern = $wheres[$paramName] ?? null;
                  $default = $defaults[$paramName] ?? null;
 
-                 $parameters->push(new \quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers\RouteParamObject(
+                 $parameters->push(new Routing\DTO\RouteParamDTO(
                      name: $paramName,
                      isOptional: $optional,
                      patern: $pattern,
@@ -56,7 +57,7 @@ class ControllerResolver
                     $refMethod = new ReflectionMethod($controllerClass, $controllerMethod);
 
                     foreach ($refMethod->getParameters() as $param) {
-                        $controllerParameters->add(new MethodParamObject(
+                        $controllerParameters->add(new MethodParamDTO(
                             name: $param->getName(),
                             hasType: $param->hasType(),
                             isOptional: $param->isOptional(),
@@ -76,7 +77,7 @@ class ControllerResolver
 
             $controller = $controllers->addController($controllerClass);
 
-            $controllerMethod = new ControllerMethodObject(
+            $controllerMethod = new ControllerMethodDTO(
                 methods: $methods,
                 methodParameters: $controllerParameters,
                 action: $name,

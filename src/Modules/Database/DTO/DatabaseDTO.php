@@ -1,13 +1,13 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO;
 
 use Illuminate\Support\Collection;
 
-class DatabaseObject
+class DatabaseDTO
 {
     /**
-     * @var Collection<TableObject>
+     * @var Collection<TableDTO>
      */
     public Collection $tables;
 

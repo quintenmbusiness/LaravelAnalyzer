@@ -2,17 +2,17 @@
 
 namespace quintenmbusiness\LaravelAnalyzer;
 
-use quintenmbusiness\LaravelAnalyzer\Resolvers\ControllerResolver;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\DatabaseResolver;
+use quintenmbusiness\LaravelAnalyzer\Modules\Routing\RoutingModule;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DatabaseModule;
 
 class LaravelAnalyzer
 {
-    public DatabaseResolver $databaseResolver;
-    public ControllerResolver $controllerResolver;
+    public DatabaseModule $databaseResolver;
+    public RoutingModule $controllerResolver;
 
     public function __construct() {
-        $this->databaseResolver = new DatabaseResolver();
-        $this->controllerResolver = new ControllerResolver();
+        $this->databaseResolver = new DatabaseModule();
+        $this->controllerResolver = new RoutingModule();
     }
 
     public function getApplication(): LaravelApplicationObject

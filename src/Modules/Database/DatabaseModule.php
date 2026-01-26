@@ -1,23 +1,23 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Resolvers;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Database;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use quintenmbusiness\LaravelAnalyzer\Enums\ModelRelationshipType;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database\ColumnObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database\DatabaseObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database\ModelObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database\ModelRelationObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database\ModelRelationThroughObject;
-use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database\TableObject;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\ColumnDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\DatabaseDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\ModelDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\ModelRelationDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\ModelRelationThroughDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\TableDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\Enum\ModelRelationshipType;
 use ReflectionClass;
 use ReflectionMethod;
 use Throwable;
 
-class DatabaseResolver
+class DatabaseModule
 {
     protected array $classMap;
 
@@ -26,9 +26,9 @@ class DatabaseResolver
         $this->classMap = $classMap ?? $this->loadComposerClassMap();
     }
 
-    public function getDatabase(): DatabaseObject
+    public function getDatabase(): DatabaseDTO
     {
-        $database = new DatabaseObject();
+        $database = new DatabaseDTO();
 
         $models = $this->discoverModelClasses();
         $structures = $this->getDatabaseStructure();
@@ -48,7 +48,7 @@ class DatabaseResolver
             try {
                 $columns = collect();
                 foreach ($tableStructure['columns'] as $name => $data) {
-                    $columns->push(new ColumnObject(
+                    $columns->push(new ColumnDTO(
                         $name,
                         $data['type'],
                         $data['raw_type'],
@@ -69,7 +69,7 @@ class DatabaseResolver
                         $relatedTable = $relation['table'];
                         $relatedModel = $modelByTable[$relatedTable] ?? null;
 
-                        $modelRelations->push(new ModelRelationObject(
+                        $modelRelations->push(new ModelRelationDTO(
                             $type,
                             $relation['relation'],
                             $relatedModel,
@@ -82,13 +82,13 @@ class DatabaseResolver
 
                 $modelClass = $modelByTable[$tableName] ?? null;
 
-                $model = new ModelObject(
+                $model = new ModelDTO(
                     $modelClass ? class_basename($modelClass) : null,
                     $modelClass,
                     $modelRelations
                 );
 
-                $tableObjects[$tableName] = new TableObject(
+                $tableObjects[$tableName] = new TableDTO(
                     $tableName,
                     $model,
                     $columns
@@ -123,7 +123,7 @@ class DatabaseResolver
                         continue; // avoid loops
                     }
 
-                    $table->model->throughRelations->push(new ModelRelationThroughObject(
+                    $table->model->throughRelations->push(new ModelRelationThroughDTO(
                         $relation->type === ModelRelationshipType::HAS_ONE
                             ? ModelRelationshipType::HAS_ONE_THROUGH
                             : ModelRelationshipType::HAS_MANY_THROUGH,
