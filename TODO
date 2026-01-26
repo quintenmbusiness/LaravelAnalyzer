@@ -2,43 +2,20 @@ For models:
 - Automatic Factory discovery / predict possible helpers and checks on the class if it does exist
 
 
+for translations:
+In url translation editor:
+1.  make a middleware that tracks previous requestdata like params and all other stuff
+2.  when someone goes to a page again but has ?translationEditor=1 in url
+3.  we then resend the previous requestdata to the controller to essentially get the original state back
+4.  we hijack the returned view file somehow, and for each place where a translation is present
+5.  We surround it with a <form></form> with a action to send a post request to edit the translation
+     form we give the following visual properties. A highlighted box around the translated value and if clicked it
+     opens a select box to select language (auto select the currently displayed one)
+     This should all be inside of the form element but this might look buggy on some element like inside a <option> we can probally in those
+     cases strip it out of it or strip out the select tag itself even if the page becomes kinda weird looking then
 
-Create Translation checker
-#TranslationsObject
-      # Collection<LanguagesObject> languages
-       this is populated by a method that fetches all and then makes instances for the one's that are missing in each Language by first making a combined list of all Translations
-       and then going through all languages again and make the missing one's with all null data.
+     for variables in translations we might need to find a way where we can make those shown values wise but in a way that
+     they are not really editable
 
-       This then repeats this same process but for the translations in the language objects.
+    in the select box also highlight ofcourse when there is a translation missing so the user does add it.s
 
-       This should allow for a possibility for things like
-       - automatic translation editor ui's where someone can highlight missing one's
-
-
-
-       $folderPath
-       # Collection<TranslationObject> $translations <- all translation files in the language folder
-
-
-     method() getAllTypesOfLanguagesFolders <- returns all languages their folderPath
-
-
-
-     it should be possible to also detect if they are used somewhere in the project and if they are being used in the project
-     we can then display their file location, and even in the case of views if we know what view its in we can check the controllers their data possibly (unless its dynamicly generated view names)
-     and figure out using that information the Route information and ability to load it in using a iframe perhaps that updates
-
-     to make the iframe idea work the following will likely be a good plan
-     - First create a duplicate file for both the Controller and the View
-     - Strip away any route arguments or controller method its body with the exception of the view file call (without params)
-     - Strip away any variable ur method calls in the view (this will not work on all views as there might be other reasons for crashes but it should ensure alot more function possible to in future also strip known elements that will require data  or javascript
-     - create a temp route for the copied controller + view and load that in
-     # edge case where a translation will require variables we will in these cases attempt to
-        1. Try using the name use values we expect they might normaly would be filled by for example things with name in the variablename likely are first + last names
-        2. if that does not work we will try to give it a random type of value out of a array of diffrent variable types
-        3. if none of those work we will simply strip it our or display the variable name itself
-
-        We will test all of the above out untill we have a functioning view (we will test these before showing to the user by generating them doing a request towards them and based on response figure out if it passed or not)
-        this process might be abit heavy unsure of the speed it will take to fully test out things will have to time this with a huge aount of test data and thne try improve
-
-        possibly keep the generation of this as a method where you can do it for a few at a time compared to where rest of this project eager loads everything in

@@ -2,7 +2,10 @@
 
 namespace quintenmbusiness\LaravelAnalyzer;
 
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use quintenmbusiness\LaravelAnalyzer\Http\Middleware\TranslationEditorMiddleware;
 
 class LaravelAnalyzerServiceProvider extends ServiceProvider
 {
@@ -14,5 +17,13 @@ class LaravelAnalyzerServiceProvider extends ServiceProvider
             __DIR__ . '/views',
             'laravel-analyzer'
         );
+
+
+        Blade::directive('lang', function ($expression) {
+            return "<?php echo '<!--__TRANS_START__' . {$expression} . '__TRANS_END__-->'; echo __({$expression}); ?>";
+        });
+
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('translation.editor', TranslationEditorMiddleware::class);
     }
 }
