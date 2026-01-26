@@ -2,8 +2,8 @@
 
 namespace quintenmbusiness\LaravelAnalyzer;
 
-use quintenmbusiness\LaravelAnalyzer\database\DatabaseResolver;
-use quintenmbusiness\LaravelAnalyzer\Controllers\ControllerResolver;
+use quintenmbusiness\LaravelAnalyzer\Resolvers\ControllerResolver;
+use quintenmbusiness\LaravelAnalyzer\Resolvers\DatabaseResolver;
 
 class LaravelAnalyzer
 {

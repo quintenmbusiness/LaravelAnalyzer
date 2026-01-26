@@ -5,7 +5,7 @@ namespace quintenmbusiness\LaravelAnalyzer;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use quintenmbusiness\LaravelAnalyzer\Http\Middleware\TranslationEditorMiddleware;
+use quintenmbusiness\LaravelAnalyzer\Laravel\Http\Middleware\TranslationEditorMiddleware;
 
 class LaravelAnalyzerServiceProvider extends ServiceProvider
 {

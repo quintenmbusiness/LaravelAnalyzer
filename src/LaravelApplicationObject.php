@@ -2,14 +2,14 @@
 
 namespace quintenmbusiness\LaravelAnalyzer;
 
-use quintenmbusiness\LaravelAnalyzer\database\objects\DatabaseObject;
-use quintenmbusiness\LaravelAnalyzer\Controllers\objects\ControllersObject;
+use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers\ControllersObject;
+use quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database\DatabaseObject;
 
 class LaravelApplicationObject
 {
     /**
-     * @param DatabaseObject    $database
-     * @param ControllersObject $controllers
+     * @param \quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Database\DatabaseObject    $database
+     * @param \quintenmbusiness\LaravelAnalyzer\Resolvers\Objects\Controllers\ControllersObject $controllers
      */
     public function __construct(
         public DatabaseObject    $database,
