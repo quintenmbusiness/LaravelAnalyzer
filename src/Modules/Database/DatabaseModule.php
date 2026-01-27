@@ -34,6 +34,7 @@ class DatabaseModule
         $structures = $this->getDatabaseStructure();
 
         $modelByTable = [];
+
         foreach ($models as $class) {
             $table = $this->inferTableNameFromModelClass($class);
             if ($table) {
