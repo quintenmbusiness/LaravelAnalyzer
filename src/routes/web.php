@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use quintenmbusiness\LaravelAnalyzer\Http\Controllers\InlineTranslationController;
 use quintenmbusiness\LaravelAnalyzer\Translations\TranslationEditorController;
 
 Route::middleware(['web'])
@@ -8,4 +9,9 @@ Route::middleware(['web'])
     ->group(function () {
         Route::get('/', [TranslationEditorController::class, 'index'])->name('la.translations.index');
         Route::post('/', [TranslationEditorController::class, 'store'])->name('la.translations.store');
+        Route::post('inline-save', [InlineTranslationController::class, 'store'])->name('la.translations.inline.save');
+
+        Route::post('/translations/inline/fetch', [InlineTranslationController::class, 'fetch'])
+            ->name('la.translations.inline.fetch');
+
     });
