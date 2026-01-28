@@ -8,7 +8,7 @@ class ProjectBuilderService
 {
     protected LaravelProjectDTO $project;
 
-    protected array $essentialFiles = [
+    public array $essentialFiles = [
         'composer.json',
         '.env',
         '.env.example',
@@ -25,64 +25,29 @@ class ProjectBuilderService
         $this->project = $project;
     }
 
-    public function buildCopy(): void
+    public function buildCopy(bool $withLock = false): void
     {
+        if($withLock) {
+            $this->essentialFiles[] = 'composer.lock';
+        }
+
         $basePath = rtrim($this->project->basePath, '/');
         $projectName = basename($basePath);
         $parentPath = dirname($basePath);
         $copyPath = $parentPath . '/' . $projectName . '_copy';
 
-        if (!@mkdir($copyPath, 0755, true)) {
-            $this->clearDirectory($copyPath);
+        // if folder exists, append timestamp to avoid deleting anything
+        if (is_dir($copyPath)) {
+            $timestamp = date('Ymd_His');
+            $copyPath = $copyPath . '_' . $timestamp;
         }
+
+        mkdir($copyPath, 0755, true);
 
         $this->copyEssentialFiles($copyPath, $basePath);
         $this->runComposerInstall($copyPath);
 
         echo "Project copy created at: $copyPath\n";
-    }
-
-    protected function clearDirectory(string $dir): void
-    {
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-            return;
-        }
-
-        $items = scandir($dir);
-        foreach ($items as $item) {
-            if ($item === '.' || $item === '..') continue;
-
-            $path = $dir . '/' . $item;
-
-            if (is_dir($path)) {
-                $this->deleteRecursive($path);
-                @chmod($path, 0755);
-                @rmdir($path);
-            } else {
-                @chmod($path, 0666);
-                @unlink($path);
-            }
-        }
-    }
-
-    protected function deleteRecursive(string $dir): void
-    {
-        $items = scandir($dir);
-        foreach ($items as $item) {
-            if ($item === '.' || $item === '..') continue;
-
-            $path = $dir . '/' . $item;
-
-            if (is_dir($path)) {
-                $this->deleteRecursive($path);
-                @chmod($path, 0755);
-                @rmdir($path);
-            } else {
-                @chmod($path, 0666);
-                @unlink($path);
-            }
-        }
     }
 
     protected function copyEssentialFiles(string $destination, string $sourceBase): void
