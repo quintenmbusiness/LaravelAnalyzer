@@ -1,11 +1,13 @@
 <?php
 
-namespace quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO;
+namespace quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\Relationships;
 
-class ModelRelationThroughDTO
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\Enum\ModelRelationshipType;
+
+class RelationThroughDTO
 {
     public function __construct(
-        public \quintenmbusiness\LaravelAnalyzer\Modules\Database\Enum\ModelRelationshipType $type,
+        public ModelRelationshipType $type,
         public string                                                                        $relationName,
         public ?string                                                                       $relatedModel,
         public string                                                                        $relatedTable,

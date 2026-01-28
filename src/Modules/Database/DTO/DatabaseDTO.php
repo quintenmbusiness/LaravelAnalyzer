@@ -3,25 +3,19 @@
 namespace quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO;
 
 use Illuminate\Support\Collection;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\Repositories\Drivers\BaseDriver;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\Services\DatabaseService;
 
 class DatabaseDTO
 {
-    /**
-     * @var Collection<TableDTO>
-     */
     public Collection $tables;
 
-    public function __construct()
-    {
-        $this->tables = collect();
-    }
+    public BaseDriver $driver;
 
-    public function resolveModelRelationships(): void
+    public function __construct(public null|string $connection = null)
     {
-        foreach ($this->tables as $table) {
-            foreach($table->model->relations as $modelRelationship) {
-//                $relatedModel = $modelRelationship->relatedTable;
-            }
-        }
+        $this->connection = $connection ?? config('database.default');
+        $this->driver = (new DatabaseService())->getDriver($this->connection);
+        $this->tables = $this->driver->getTables();
     }
 }
