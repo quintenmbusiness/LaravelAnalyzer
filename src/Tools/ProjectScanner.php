@@ -20,7 +20,7 @@ class ProjectScanner
 
     public function scan(): LaravelProjectDTO
     {
-        $dto = new LaravelProjectDTO();
+        $dto = new LaravelProjectDTO($this->basePath);
 
         $dto->rootFiles = $this->scanDirectory($this->basePath, true);
 
