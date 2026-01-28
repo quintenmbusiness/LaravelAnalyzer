@@ -2,56 +2,82 @@
 
 namespace quintenmbusiness\LaravelAnalyzer\Modules\Database\Repositories\Drivers;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\ColumnDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\Relationships\RelationshipDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\TableDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\Enum\ModelRelationshipType;
 
 class SqliteDriver extends BaseDriver
 {
-    public function getTables(string $connection): array
+    public function getTables(): Collection
     {
-        return array_map(
-            fn ($r) => $r->name,
-            DB::connection($connection)->select(
+        return collect(
+            DB::connection($this->connection)->select(
                 "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'"
+            )
+        )->map(
+            fn ($row) => new TableDTO(
+                $row->name,
+                $this->getColumns($row->name),
+                $this->getRelationships($row->name)
             )
         );
     }
 
-    public function getTableStructure(string $connection, string $table): array
+    public function getColumns(string $table): Collection
     {
-        $structure = ['columns' => [], 'relationships' => []];
+        $columns = collect();
 
-        foreach ($this->getColumns($connection, $table) as $col) {
-            $structure['columns'][$col->name] = [
-                'type' => strtolower($col->type),
-                'nullable' => $col->notnull === 0,
-                'default' => $col->dflt_value,
-                'primary' => $col->pk === 1,
-            ];
+        foreach (
+            DB::connection($this->connection)->select(
+                "PRAGMA table_info(\"$table\")"
+            ) as $col
+        ) {
+            $columns->push(
+                new ColumnDTO(
+                    name: $col->name,
+                    type: $this->inferColumnType($col->type),
+                    rawType: $col->type,
+                    nullable: ! $col->notnull,
+                    default: $col->dflt_value
+                )
+            );
         }
 
-        foreach ($this->getForeignKeys($connection, $table) as $fk) {
-            $structure['relationships']['belongs_to'][] =
-                $this->belongsToRelation(
-                    $fk->from,
-                    $fk->table,
-                    $fk->to
-                );
+        return $columns;
+    }
+
+    public function getRelationships(string $table): Collection
+    {
+        $relations = collect();
+
+        foreach (
+            DB::connection($this->connection)->select(
+                "PRAGMA foreign_key_list(\"$table\")"
+            ) as $fk
+        ) {
+            if ($fk->table === $table) {
+                continue;
+            }
+
+            $relationName = $this->inferRelationName($fk->from, $fk->table);
+            $relatedModel = Str::studly(Str::singular($fk->table));
+
+            $relations->push(
+                new RelationshipDTO(
+                    type: ModelRelationshipType::BELONGS_TO,
+                    relationName: $relationName,
+                    relatedModel: $relatedModel,
+                    relatedTable: $fk->table,
+                    foreignKey: $fk->from,
+                    localKey: $fk->to
+                )
+            );
         }
 
-        return $structure;
-    }
-
-    public function getColumns(string $connection, string $table): array
-    {
-        return DB::connection($connection)->select(
-            "PRAGMA table_info(\"$table\")"
-        );
-    }
-
-    public function getForeignKeys(string $connection, string $table): array
-    {
-        return DB::connection($connection)->select(
-            "PRAGMA foreign_key_list(\"$table\")"
-        );
+        return $relations;
     }
 }

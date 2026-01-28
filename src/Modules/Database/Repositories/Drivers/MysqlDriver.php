@@ -2,64 +2,93 @@
 
 namespace quintenmbusiness\LaravelAnalyzer\Modules\Database\Repositories\Drivers;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\ColumnDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\Relationships\RelationshipDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\TableDTO;
+use quintenmbusiness\LaravelAnalyzer\Modules\Database\Enum\ModelRelationshipType;
 
 class MysqlDriver extends BaseDriver
 {
-    public function getTables(string $connection): array
+
+    public function getTables(): Collection
     {
-        return array_map(fn ($r) => $r->name, DB::connection($connection)->select(
-            "SELECT TABLE_NAME AS name FROM INFORMATION_SCHEMA.TABLES
-                    WHERE TABLE_SCHEMA = DATABASE()
-                    AND TABLE_TYPE = 'BASE TABLE'"
+        return collect(
+            DB::connection($this->connection)->select(
+                "SELECT TABLE_NAME AS name
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_SCHEMA = DATABASE()
+               AND TABLE_TYPE = 'BASE TABLE'"
             )
+        )->map(
+            fn ($row) => new TableDTO($row->name, $this->getColumns($row->name), $this->getRelationships($row->name))
         );
     }
 
-    public function getTableStructure(string $connection, string $table): array
+    public function getColumns(string $table): Collection
     {
-        $structure = ['columns' => [], 'relationships' => []];
+        $columns = collect();
 
-        foreach ($this->getColumns($connection, $table) as $col) {
-            $structure['columns'][$col->COLUMN_NAME] = [
-                'type' => $col->COLUMN_TYPE,
-                'nullable' => $col->IS_NULLABLE === 'YES',
-                'default' => $col->COLUMN_DEFAULT,
-            ];
-        }
-
-        foreach ($this->getForeignKeys($connection, $table) as $fk) {
-            $structure['relationships']['belongs_to'][] =
-                $this->belongsToRelation(
-                    $fk->COLUMN_NAME,
-                    $fk->REFERENCED_TABLE_NAME,
-                    $fk->REFERENCED_COLUMN_NAME
-                );
-        }
-
-        return $structure;
-    }
-
-    public function getColumns(string $connection, string $table): array
-    {
-        return DB::connection($connection)->select(
+        foreach(DB::connection($this->connection)->select(
             "SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, COLUMN_DEFAULT
                 FROM INFORMATION_SCHEMA.COLUMNS
                 WHERE TABLE_SCHEMA = DATABASE()
                 AND TABLE_NAME = :table",
-                ['table' => $table]
-        );
+            ['table' => $table]
+        ) as $rawCol) {
+            $columns->push(new ColumnDTO(
+                name: $rawCol->COLUMN_NAME,
+                type: $this->inferColumnType(explode('(', $rawCol->COLUMN_TYPE)[0]),
+                rawType:  $rawCol->COLUMN_TYPE,
+                nullable: $rawCol->IS_NULLABLE === 'YES',
+                default:  $rawCol->COLUMN_DEFAULT,
+            ));
+        };
+
+        return $columns;
     }
 
-    public function getForeignKeys(string $connection, string $table): array
+    public function getRelationships(string $table): Collection
     {
-       return DB::connection($connection)->select(
-           "SELECT COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
-            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-            WHERE TABLE_SCHEMA = DATABASE()
-            AND TABLE_NAME = :table
-            AND REFERENCED_TABLE_NAME IS NOT NULL",
+        $relations = collect();
+
+        $fks = DB::connection($this->connection)->select(
+            "
+        SELECT
+            COLUMN_NAME,
+            REFERENCED_TABLE_NAME,
+            REFERENCED_COLUMN_NAME
+        FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = :table
+          AND REFERENCED_TABLE_NAME IS NOT NULL
+        ",
             ['table' => $table]
-       );
+        );
+
+        foreach ($fks as $fk) {
+            if ($fk->REFERENCED_TABLE_NAME === $table) {
+                continue;
+            }
+
+            $relationName = $this->inferRelationName($fk->COLUMN_NAME, $fk->REFERENCED_TABLE_NAME);
+            $relatedModel = Str::studly(Str::singular($fk->REFERENCED_TABLE_NAME));
+
+            $relations->push(
+                new RelationshipDTO(
+                    type: ModelRelationshipType::BELONGS_TO,
+                    relationName: $relationName,
+                    relatedModel: $relatedModel,
+                    relatedTable: $fk->REFERENCED_TABLE_NAME,
+                    foreignKey: $fk->COLUMN_NAME,
+                    localKey: $fk->REFERENCED_COLUMN_NAME
+                )
+            );
+        }
+
+        return $relations;
     }
+
 }
