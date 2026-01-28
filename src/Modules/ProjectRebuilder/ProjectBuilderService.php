@@ -10,7 +10,6 @@ class ProjectBuilderService
 
     protected array $essentialFiles = [
         'composer.json',
-        'composer.lock',
         '.env',
         '.env.example',
         'artisan',
@@ -33,8 +32,9 @@ class ProjectBuilderService
         $parentPath = dirname($basePath);
         $copyPath = $parentPath . '/' . $projectName . '_copy';
 
-        $this->deleteDirectoryIfExists($copyPath);
-        mkdir($copyPath, 0755, true);
+        if (!@mkdir($copyPath, 0755, true)) {
+            $this->clearDirectory($copyPath);
+        }
 
         $this->copyEssentialFiles($copyPath, $basePath);
         $this->runComposerInstall($copyPath);
@@ -42,14 +42,28 @@ class ProjectBuilderService
         echo "Project copy created at: $copyPath\n";
     }
 
-    protected function deleteDirectoryIfExists(string $dir): void
+    protected function clearDirectory(string $dir): void
     {
         if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
             return;
         }
 
-        $this->deleteRecursive($dir);
-        @rmdir($dir); // force remove root folder
+        $items = scandir($dir);
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') continue;
+
+            $path = $dir . '/' . $item;
+
+            if (is_dir($path)) {
+                $this->deleteRecursive($path);
+                @chmod($path, 0755);
+                @rmdir($path);
+            } else {
+                @chmod($path, 0666);
+                @unlink($path);
+            }
+        }
     }
 
     protected function deleteRecursive(string $dir): void
@@ -65,7 +79,7 @@ class ProjectBuilderService
                 @chmod($path, 0755);
                 @rmdir($path);
             } else {
-                @chmod($path, 0666); // make writable
+                @chmod($path, 0666);
                 @unlink($path);
             }
         }
