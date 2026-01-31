@@ -1,6 +1,6 @@
 {
   "name": "quintenmbusiness/laravel-analyzer",
-  "description": "Generates all the classes you can think of for your laravel application using only migration files",
+  "description": "Laravel Analyzer is a developer-focused package that inspects your Laravel application and extracts structured metadata about your codebase.",
   "type": "library",
   "license": "MIT",
   "authors": [
