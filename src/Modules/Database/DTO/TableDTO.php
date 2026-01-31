@@ -8,6 +8,8 @@ use quintenmbusiness\LaravelAnalyzer\Modules\Database\DTO\Relationships\Relation
 
 class TableDTO
 {
+    public PrimaryKeyDTO $primaryKey;
+
     public string $name;
     /**
      * @var Collection<ColumnDTO>
@@ -29,10 +31,12 @@ class TableDTO
         string $name,
         Collection    $columns,
         Collection    $relations,
+        PrimaryKeyDTO $primaryKey
     ) {
         $this->name = $name;
         $this->columns = $columns;
         $this->relations = $relations;
         $this->relationsThrough = new Collection();
+        $this->primaryKey = $primaryKey;
     }
 }
